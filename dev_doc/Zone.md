@@ -3,10 +3,13 @@
 Zone是一个抽象类. 每个类都需要提供以下方法:
 
 ```cpp
-vector<Listener*>& Zone::get_listeners()
+using LPtr = shared_ptr<Listener>
+vector<LPtr>& Zone::get_listeners()
 ```
 
-它将按监听顺序返回一个监听器指针列表的引用. 注意, 所有监听器指针都需要是`new`创建的(因为我们要用`delete`删除它).
+它将按监听顺序返回一个监听器指针列表的引用. 注意, 所有监听器指针都需要是`make_shared`创建的.
+
+> 使用这种方法的理由是为了扩展性, 我们必须使用工厂方法来生产Listener, 而C++的多态只支持指针多态, 这就导致我们必须传递指针(换句话说在工厂函数中我们需要new对象). 这会导致非常严重的内存泄漏, 所以我们强制使用shared_ptr.
 
 简单来说, Zone是一个Listener容器. 它的作用就是管理Listener. 具体某个的Zone中还包含了执行游戏逻辑所必需的其他参数.
 
@@ -14,7 +17,7 @@ vector<Listener*>& Zone::get_listeners()
 void Zone::Zone()
 ```
 
-通常, Zone中包含一个Listener*指针列表. 拷贝这个列表时不仅需要复制指针, 还需要拷贝内部成员. 没有特殊说明的情况下, 我们均使用`shared_ptr`管理内存. 因为游戏中可能会复制大量局面, 对指针管理不当会造成严重的内存泄漏.
+通常, Zone中包含一个LPtr指针列表. 拷贝这个列表时不仅需要复制指针, 还需要拷贝内部成员. 没有特殊说明的情况下, 我们均使用`shared_ptr`管理内存. 因为游戏中可能会复制大量局面, 对指针管理不当会造成严重的内存泄漏.
 
 ```cpp
 void Zone::~Zone();
@@ -32,7 +35,7 @@ virtual AppendZone::append(Listener* L)
 AppendZone::pop(int index)
 ```
 
-将index处的Listener弹出. 此方法有一个默认实现. 它将get_listeners()返回的vector中的对应index的监听器弹出, 之后对所有其他监听器重新修改位置Address.
+将index处的Listener弹出. 此方法有一个默认实现. 它将get_listeners()返回的vector中的对应index的监听器弹出, 之后对所有其他监听器重新修改位置Address. 
 
 
 
@@ -46,7 +49,7 @@ CharZone中记录了如下信息:
 2. 角色列表char_list
 3. 出战角色下标active
 
-char_list是一个`vector<Charcter*>`.
+char_list是一个`vector<Charcter*>`. 
 
 ### 函数
 
