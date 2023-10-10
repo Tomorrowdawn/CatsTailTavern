@@ -32,8 +32,13 @@ namespace element{
     const int pierce = 8;
 };
 
+struct CharAddr{
+    int subzone, offset;
+};
+
 struct Address{
     int player_id = 0, zone_id = 0, index = 0;
+    CharAddr* ca = nullptr;
 };
 
 

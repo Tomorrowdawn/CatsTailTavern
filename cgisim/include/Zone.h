@@ -1,9 +1,24 @@
 #pragma once
 #include "Listener.h"
 #include <vector>
+#include <memory>
 #include "assert.h"
 namespace cgisim{
     using namespace std;
+
+namespace ZoneID{
+enum ZoneID{
+    CharZone = 0,
+    TeamBuffZone,
+    SummonZone,
+    SupportZone,
+    HandZone,
+    PileZone,
+    DicePool,
+    Zone
+};
+};
+
 struct Zone{
     virtual vector<Lptr>& get_listeners() = 0;
     virtual void append(Lptr L) = 0;
@@ -16,8 +31,10 @@ struct Zone{
     }
 };
 
+using Zptr = shared_ptr<Zone>;
+
 struct PileZone:Zone{
-    vector<Cardptr>&;
+    vector<Cardptr>& pile;
 };
 
 };
