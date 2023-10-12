@@ -4,9 +4,18 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "pybind11/pybind11.h"
 namespace cgisim{
+    namespace py = pybind11;
 
 class GameInstance;
+
+/**
+ * @brief bind Listeners to python, including Listener and derived structs.
+ * 
+ * @param m : python module ref.
+ */
+void bindListeners(py::module_ &m);
 
 struct Listener{
     Address addr;
@@ -17,7 +26,10 @@ struct Listener{
     bool alive = true;
 
 
-    virtual cgisim::Elist listen(EventType e) = 0;
+    virtual cgisim::Elist listen(EventType event){
+        if(std::visit([](Eptr e){return e->eid;}, event)== -1) return Elist();
+        else return std::visit(*this, event);
+    };
     virtual std::string getName() = 0;//usually it should be declared as a static function.
     Elist operator()(Eptr e){
         return Elist();//do nothing.
@@ -25,34 +37,17 @@ struct Listener{
 };
 
 using Lptr = std::shared_ptr<Listener>;
-
-enum CardTag{
-    notag = 0, event, food, partner, weapon, artifact
-};
+using Llist = std::vector<Lptr>;
 
 struct Card:Listener{
     virtual Elist play();
-    virtual Elist enterpile(){}
+    virtual Elist enterpile(){return Elist();}
     virtual Elist draw();
     DicePattern dicecost;
     virtual std::vector<CardTag> getTags() = 0;
 };
 
 using Cardptr = std::shared_ptr<Card>;
-
-enum Faction{
-    nowhere = 0, Mondstadt, Liyue, Inazuma, Sumeru, Fontaine, Natlan, Snezhnaya, Hilichurl, Fatui, Abyss, Khaenri_ah, fac_count
-};
-
-enum WeaponType{
-    noweapon = 0, sword, claymore, catalyst, bow, polearm
-};
-
-enum KitOption{
-    na = 0, skill, burst, sp1, sp2, count
-};
-
-
 
 /**
  * @brief This struct contains *real-time* properties of a character.

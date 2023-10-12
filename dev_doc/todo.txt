@@ -1,0 +1,2 @@
+1. 完成EventSystem, 添加一个GameStart并完成测试.
+2. 完成后续的其他Event. 每写完一个就配套一个测试样例(C++ debug太麻烦了).

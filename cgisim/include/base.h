@@ -1,6 +1,24 @@
 #pragma once
 
 namespace cgisim{
+    enum Faction{
+    nowhere = 0, Mondstadt, Liyue, Inazuma, Sumeru, Fontaine, Natlan, Snezhnaya, Hilichurl, Fatui, Abyss, Khaenri_ah, fac_count
+};
+
+enum WeaponType{
+    noweapon = 0, sword, claymore, catalyst, bow, polearm
+};
+
+enum KitOption{
+    na = 0, skill, burst, sp1, sp2, count
+};
+
+
+enum CardTag{
+    notag = 0, event, food, partner, weapon, artifact
+};
+
+
 namespace element{
 
     //aura
